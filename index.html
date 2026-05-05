@@ -1,0 +1,1475 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>莹烛电商知识库</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172126;
+      --muted: #64727a;
+      --line: #d8e1e5;
+      --soft: #eef4f2;
+      --paper: #f7f8f5;
+      --panel: #ffffff;
+      --brand: #0f766e;
+      --brand-strong: #0a5f58;
+      --gold: #b7791f;
+      --red: #b42318;
+      --shadow: 0 18px 44px rgba(23, 33, 38, .12);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(120deg, rgba(15, 118, 110, .12), transparent 30%),
+        linear-gradient(300deg, rgba(183, 121, 31, .12), transparent 32%),
+        var(--paper);
+      color: var(--ink);
+    }
+
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 292px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px;
+      color: #f7fbfa;
+      background: #102421;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 46px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #12a594, #d89427);
+      font-weight: 900;
+      color: #fff;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 4px;
+      font-size: 21px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .brand p, .aside-note {
+      margin-bottom: 0;
+      color: #b7c8c4;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .aside-note {
+      padding: 13px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      margin: 18px 0;
+    }
+
+    nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: #dce8e5;
+      text-align: left;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+    }
+
+    .nav-icon {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: rgba(255,255,255,.13);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .nav-title {
+      display: block;
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-meta {
+      display: block;
+      margin-top: 2px;
+      color: #aac0bb;
+      font-size: 12px;
+    }
+
+    .count-pill {
+      min-width: 28px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,.13);
+      color: #eaf4f1;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    main {
+      min-width: 0;
+      padding: 24px;
+    }
+
+    .search-bar {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 10px;
+      align-items: center;
+      padding: 14px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(216,225,229,.9);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 12px 30px rgba(23, 33, 38, .08);
+      backdrop-filter: blur(12px);
+    }
+
+    .search-field {
+      position: relative;
+    }
+
+    .search-field span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    #searchInput {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 14px 0 42px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    #searchInput:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(15,118,110,.14);
+    }
+
+    .result-count {
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .icon-btn, .primary-btn, .text-btn {
+      min-height: 40px;
+      border-radius: 8px;
+      border: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .icon-btn {
+      width: 40px;
+      padding: 0;
+      background: #e7f2ef;
+      color: var(--brand-strong);
+      font-size: 18px;
+    }
+
+    .primary-btn {
+      padding: 0 14px;
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .text-btn {
+      padding: 0 12px;
+      background: #eef4f2;
+      color: var(--brand-strong);
+    }
+
+    .download-btn {
+      min-height: 42px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      margin: 14px 0;
+      background: var(--brand);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .file-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin: 14px 0;
+    }
+
+    .download-btn:hover {
+      background: var(--brand-strong);
+    }
+
+    .view-btn {
+      min-height: 42px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      background: #e7f2ef;
+      color: var(--brand-strong);
+      text-decoration: none;
+      font-weight: 900;
+    }
+
+    .view-btn:hover {
+      background: #d9ebe7;
+    }
+
+    .record-action {
+      margin-top: 12px;
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 0 14px;
+      background: #e7f2ef;
+      color: var(--brand-strong);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .primary-btn:hover { background: var(--brand-strong); }
+    .icon-btn:hover, .text-btn:hover { background: #d9ebe7; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .intro, .side-panel, .detail-panel, .result-panel, .module-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow);
+    }
+
+    .intro {
+      padding: 28px;
+      min-height: 220px;
+      display: grid;
+      align-content: center;
+    }
+
+    .eyebrow {
+      margin-bottom: 10px;
+      color: var(--brand-strong);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    h2 {
+      margin-bottom: 12px;
+      font-size: clamp(30px, 4.2vw, 48px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      max-width: 760px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .side-panel {
+      padding: 18px;
+      display: grid;
+      align-content: space-between;
+      gap: 18px;
+      background:
+        linear-gradient(135deg, rgba(15,118,110,.14), transparent 45%),
+        linear-gradient(315deg, rgba(183,121,31,.13), transparent 44%),
+        #fff;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid #e4ecef;
+    }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--brand-strong);
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: #516168;
+      font-size: 12px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .content-view {
+      min-width: 0;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .module-card {
+      padding: 18px;
+      box-shadow: none;
+      display: grid;
+      gap: 12px;
+      min-height: 186px;
+    }
+
+    .module-card h3, .detail-panel h3, .side-panel h3, .result-panel h3 {
+      margin-bottom: 8px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 0;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tag {
+      display: inline-flex;
+      min-height: 26px;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #edf4f2;
+      color: #315c57;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .folder-filters {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.9);
+    }
+
+    .folder-btn {
+      min-height: 34px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 12px;
+      background: #edf4f2;
+      color: #315c57;
+      font-weight: 900;
+    }
+
+    .folder-btn:hover,
+    .folder-btn.active {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .record-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .record {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+      text-align: left;
+      display: grid;
+      gap: 8px;
+    }
+
+    .record:hover {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(15,118,110,.12);
+    }
+
+    .record strong {
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .record p {
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .record-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      color: #6b7a80;
+      font-size: 12px;
+    }
+
+    .detail-panel {
+      padding: 20px;
+      min-height: 520px;
+      position: sticky;
+      top: 94px;
+    }
+
+    .detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .detail-title {
+      margin-bottom: 6px;
+      font-size: 24px;
+      line-height: 1.22;
+    }
+
+    .detail-body {
+      color: #34454c;
+      line-height: 1.75;
+    }
+
+    .field-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      overflow: hidden;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .field-table th, .field-table td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    .field-table th {
+      width: 116px;
+      background: #f0f5f3;
+      color: #315c57;
+      font-weight: 900;
+    }
+
+    .steps {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .steps li {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfb;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #dfeeea;
+      color: var(--brand-strong);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .result-panel {
+      padding: 18px;
+      box-shadow: none;
+      margin-bottom: 14px;
+    }
+
+    mark {
+      background: #fde68a;
+      color: #2b2111;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+
+    .empty {
+      padding: 26px;
+      border: 1px dashed #b9c8c4;
+      border-radius: 8px;
+      background: rgba(255,255,255,.7);
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 1060px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: relative;
+        height: auto;
+      }
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .workspace, .hero {
+        grid-template-columns: 1fr;
+      }
+      .detail-panel {
+        position: static;
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 680px) {
+      main, aside { padding: 16px; }
+      .search-bar {
+        grid-template-columns: 1fr auto;
+      }
+      .result-count {
+        grid-column: 1 / -1;
+        order: 3;
+      }
+      .module-grid, nav, .metric-grid {
+        grid-template-columns: 1fr;
+      }
+      .intro { padding: 20px; }
+      h2 { font-size: 30px; }
+      .field-table th {
+        width: 92px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">知</div>
+        <div>
+          <h1>莹烛电商知识库</h1>
+          <p>产品参数、流程、FAQ 与收藏</p>
+        </div>
+      </div>
+      <nav id="moduleNav" aria-label="知识库模块"></nav>
+      <p class="aside-note">资料文件到位后，将 Excel/Word/PDF 内容整理进内置索引，页面仍可直接双击打开。</p>
+    </aside>
+
+    <main>
+      <header class="search-bar">
+        <div class="search-field">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="搜索产品型号、参数、流程步骤、问题关键词">
+        </div>
+        <div class="result-count" id="resultCount">共 0 条资料</div>
+        <button class="icon-btn" id="clearSearch" type="button" title="清空搜索" aria-label="清空搜索">×</button>
+      </header>
+
+      <section class="hero">
+        <div class="intro">
+          <p class="eyebrow">TRAINING KNOWLEDGE BASE</p>
+          <h2>把培训资料变成随查随用的工作台</h2>
+          <p>顶部搜索会覆盖四个模块。点击任意条目可查看参数表、流程步骤或 FAQ 详情，并自动记录最近查看；常用资料可以收藏，刷新后仍会保留。</p>
+        </div>
+        <div class="side-panel">
+          <h3>当前资料概览</h3>
+          <div class="metric-grid" id="metricGrid"></div>
+          <p class="summary">当前内容为示例索引。你提供正式资料后，我会把真实产品参数和工作流程替换进去。</p>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="content-view">
+          <div id="moduleView"></div>
+          <div id="searchView" class="hidden"></div>
+        </div>
+        <aside class="detail-panel" id="detailPanel" aria-live="polite"></aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="workflow-data.js"></script>
+  <script>
+    const modules = [
+      { id: "product", title: "产品参数查询", short: "产品", icon: "P", intro: "集中查询型号、规格、尺寸、材质、适用范围和注意事项。" },
+      { id: "workflow", title: "工作流程查询", short: "流程", icon: "W", intro: "按岗位、场景和关键词查找标准作业步骤。" },
+      { id: "contract", title: "查合同模板", short: "合同", icon: "C", intro: "按合同类型、业务场景和关键词查找常用合同模板。" },
+      { id: "report", title: "查检测报告", short: "报告", icon: "R", intro: "按产品、证书类型和关键词查找检测报告并下载。" },
+      { id: "company", title: "查公司信息", short: "公司", icon: "I", intro: "查看/下载公司宣传、企业资质和产品画册资料。" },
+      { id: "saved", title: "收藏 / 最近查看", short: "收藏", icon: "S", intro: "保存常用资料，并快速回到最近查看内容。" },
+      { id: "faq", title: "常见问题", short: "FAQ", icon: "Q", intro: "沉淀培训中高频问题、标准答案和关联资料。" }
+    ];
+
+    const knowledgeBase = [
+      {
+        id: "contract-wenyao-template",
+        module: "contract",
+        title: "文耀合同模板",
+        keywords: ["合同模板", "文耀", "下载", "Word", "docx"],
+        summary: "文耀合同 Word 模板，员工可直接从网页下载使用。",
+        fields: {
+          合同类型: "合同模板",
+          适用场景: "文耀相关业务合同",
+          文件格式: "Word / DOCX",
+          下载文件: "assets/contracts/文耀合同模板.docx"
+        },
+        body: "点击下方下载按钮获取文耀合同模板。使用前请核对客户主体、产品或服务内容、金额、付款方式、交付信息和盖章要求。"
+      },
+      {
+        id: "contract-yingdian-template",
+        module: "contract",
+        title: "盈点合同模板",
+        keywords: ["合同模板", "盈点", "下载", "Word", "docx"],
+        summary: "盈点合同 Word 模板，员工可直接从网页下载使用。",
+        fields: {
+          合同类型: "合同模板",
+          适用场景: "盈点相关业务合同",
+          文件格式: "Word / DOCX",
+          下载文件: "assets/contracts/盈点合同模板.docx"
+        },
+        body: "点击下方下载按钮获取盈点合同模板。使用前请核对客户主体、产品或服务内容、金额、付款方式、交付信息和盖章要求。"
+      },
+      {
+        id: "contract-yingye-template",
+        module: "contract",
+        title: "莹烨合同模板",
+        keywords: ["合同模板", "莹烨", "下载", "Word", "docx"],
+        summary: "莹烨合同 Word 模板，员工可直接从网页下载使用。",
+        fields: {
+          合同类型: "合同模板",
+          适用场景: "莹烨相关业务合同",
+          文件格式: "Word / DOCX",
+          下载文件: "assets/contracts/莹烨合同模板.docx"
+        },
+        body: "点击下方下载按钮获取莹烨合同模板。使用前请核对客户主体、产品或服务内容、金额、付款方式、交付信息和盖章要求。"
+      },
+      {
+        id: "contract-yingzhu-template",
+        module: "contract",
+        title: "莹烛合同模板",
+        keywords: ["合同模板", "莹烛", "下载", "Word", "docx"],
+        summary: "莹烛合同 Word 模板，员工可直接从网页下载使用。",
+        fields: {
+          合同类型: "合同模板",
+          适用场景: "莹烛相关业务合同",
+          文件格式: "Word / DOCX",
+          下载文件: "assets/contracts/莹烛合同模板.docx"
+        },
+        body: "点击下方下载按钮获取莹烛合同模板。使用前请核对客户主体、产品或服务内容、金额、付款方式、交付信息和盖章要求。"
+      },
+      {
+        id: "report-stainless-pole",
+        module: "report",
+        title: "不锈钢立杆检测报告",
+        keywords: ["检测报告", "不锈钢立杆", "立杆", "PDF", "下载"],
+        summary: "不锈钢立杆检测报告 PDF，员工可直接下载用于资质或客户资料提交。",
+        fields: {
+          文件类型: "检测报告",
+          适用产品: "不锈钢立杆",
+          文件格式: "PDF",
+          下载文件: "assets/reports/不锈钢立杆检测报告.pdf"
+        },
+        body: "点击下方按钮下载不锈钢立杆检测报告。提交客户或平台前，请确认客户要求的产品名称、报告类型和文件版本是否匹配。"
+      },
+      {
+        id: "report-energy-battery-msds",
+        module: "report",
+        title: "储能电池MSDS证书",
+        keywords: ["检测报告", "证书", "储能电池", "MSDS", "PDF", "下载"],
+        summary: "储能电池 MSDS 证书 PDF，适用于电池安全资料和运输资料提交。",
+        fields: {
+          文件类型: "MSDS证书",
+          适用产品: "储能电池",
+          文件格式: "PDF",
+          下载文件: "assets/reports/储能电池MSDS证书.pdf"
+        },
+        body: "点击下方按钮下载储能电池 MSDS 证书。用于物流、平台或客户审核时，请核对是否需要同时提供 UN38.3 文件。"
+      },
+      {
+        id: "report-energy-battery-un383",
+        module: "report",
+        title: "储能电池UN38.3",
+        keywords: ["检测报告", "证书", "储能电池", "UN38.3", "运输", "PDF", "下载"],
+        summary: "储能电池 UN38.3 证书 PDF，适用于电池运输和合规资料提交。",
+        fields: {
+          文件类型: "UN38.3证书",
+          适用产品: "储能电池",
+          文件格式: "PDF",
+          下载文件: "assets/reports/储能电池UN38.3.pdf"
+        },
+        body: "点击下方按钮下载储能电池 UN38.3 文件。涉及电池运输或出口资料时，通常需要与 MSDS 证书配套核对。"
+      },
+      {
+        id: "report-explosion-camera",
+        module: "report",
+        title: "防爆摄像头合格证检测报告",
+        keywords: ["检测报告", "合格证", "防爆摄像头", "摄像头", "PDF", "下载"],
+        summary: "防爆摄像头合格证及检测报告 PDF，适用于防爆摄像头资质资料。",
+        fields: {
+          文件类型: "合格证 / 检测报告",
+          适用产品: "防爆摄像头",
+          文件格式: "PDF",
+          下载文件: "assets/reports/防爆摄像头合格证检测报告.pdf"
+        },
+        body: "点击下方按钮下载防爆摄像头合格证检测报告。给客户前请确认项目是否要求防爆等级、合格证和检测报告同时提交。"
+      },
+      {
+        id: "report-surge-protector",
+        module: "report",
+        title: "防雷器检测报告新",
+        keywords: ["检测报告", "防雷器", "防雷", "PDF", "下载"],
+        summary: "防雷器检测报告 PDF，适用于防雷器产品资料提交。",
+        fields: {
+          文件类型: "检测报告",
+          适用产品: "防雷器",
+          文件格式: "PDF",
+          下载文件: "assets/reports/防雷器检测报告新.pdf"
+        },
+        body: "点击下方按钮下载防雷器检测报告。提交前请确认客户所需型号与报告覆盖范围一致。"
+      },
+      {
+        id: "report-waterproof-box",
+        module: "report",
+        title: "防水箱检测报告",
+        keywords: ["检测报告", "防水箱", "防水", "PDF", "下载"],
+        summary: "防水箱检测报告 PDF，适用于防水箱产品资质资料。",
+        fields: {
+          文件类型: "检测报告",
+          适用产品: "防水箱",
+          文件格式: "PDF",
+          下载文件: "assets/reports/防水箱检测报告.pdf"
+        },
+        body: "点击下方按钮下载防水箱检测报告。用于客户资料时，请同步核对防水等级、产品名称和项目要求。"
+      },
+      {
+        id: "report-solar-panel-ce",
+        module: "report",
+        title: "光伏板CE认证 水印",
+        keywords: ["检测报告", "证书", "光伏板", "CE认证", "水印", "PDF", "下载"],
+        summary: "光伏板 CE 认证 PDF，适用于光伏板认证资料提交。",
+        fields: {
+          文件类型: "CE认证",
+          适用产品: "光伏板",
+          文件格式: "PDF",
+          下载文件: "assets/reports/光伏板CE认证 水印.pdf"
+        },
+        body: "点击下方按钮下载光伏板 CE 认证文件。提交前请确认客户是否接受水印版本。"
+      },
+      {
+        id: "report-monitor-pole",
+        module: "report",
+        title: "监控立杆检测报告",
+        keywords: ["检测报告", "监控立杆", "立杆", "PDF", "下载"],
+        summary: "监控立杆检测报告 PDF，适用于监控立杆产品资料提交。",
+        fields: {
+          文件类型: "检测报告",
+          适用产品: "监控立杆",
+          文件格式: "PDF",
+          下载文件: "assets/reports/监控立杆检测报告.pdf"
+        },
+        body: "点击下方按钮下载监控立杆检测报告。涉及立杆规格差异时，请先核对客户要求与报告名称是否匹配。"
+      },
+      {
+        id: "report-cement-pier",
+        module: "report",
+        title: "水泥墩检测报告",
+        keywords: ["检测报告", "水泥墩", "基础", "PDF", "下载"],
+        summary: "水泥墩检测报告 PDF，适用于水泥墩或基础件资料提交。",
+        fields: {
+          文件类型: "检测报告",
+          适用产品: "水泥墩",
+          文件格式: "PDF",
+          下载文件: "assets/reports/水泥墩检测报告.pdf"
+        },
+        body: "点击下方按钮下载水泥墩检测报告。提交前请确认客户需要的是水泥墩、基础件还是配套立杆资料。"
+      },
+      {
+        id: "report-solar-ts",
+        module: "report",
+        title: "太阳能检测报告-TS",
+        keywords: ["检测报告", "太阳能", "TS", "PDF", "下载"],
+        summary: "太阳能检测报告 PDF，适用于太阳能相关产品资料提交。",
+        fields: {
+          文件类型: "检测报告",
+          适用产品: "太阳能",
+          文件格式: "PDF",
+          下载文件: "assets/reports/太阳能检测报告-TS.pdf"
+        },
+        body: "点击下方按钮下载太阳能检测报告。提交前请核对客户需要的太阳能产品类别和报告版本。"
+      },
+      {
+        id: "company-explosion-catalog",
+        module: "company",
+        title: "防爆产品画册彩页",
+        keywords: ["公司信息", "画册", "彩页", "防爆产品", "产品资料", "PDF", "查看", "下载"],
+        summary: "防爆产品画册彩页 PDF，适合给客户介绍防爆产品信息。",
+        fields: {
+          资料类型: "产品画册 / 彩页",
+          适用内容: "防爆产品",
+          文件格式: "PDF",
+          查看文件: "assets/company/防爆产品画册彩页.pdf",
+          下载文件: "assets/company/防爆产品画册彩页.pdf"
+        },
+        body: "用于向客户展示防爆产品相关信息。发送前请确认客户需要的是防爆产品资料，并注意是否需要配套检测报告或合格证。"
+      },
+      {
+        id: "company-off-grid-energy",
+        module: "company",
+        title: "离网储能 彩页",
+        keywords: ["公司信息", "画册", "彩页", "离网储能", "储能", "产品资料", "PDF", "查看", "下载"],
+        summary: "离网储能彩页 PDF，适合用于储能产品介绍和客户沟通。",
+        fields: {
+          资料类型: "产品画册 / 彩页",
+          适用内容: "离网储能",
+          文件格式: "PDF",
+          查看文件: "assets/company/离网储能 彩页.pdf",
+          下载文件: "assets/company/离网储能 彩页.pdf"
+        },
+        body: "用于向客户介绍离网储能产品。发送前请核对客户需求场景，如是否关注容量、应用场景、运输资质或配套证书。"
+      },
+      {
+        id: "company-qualification-promo",
+        module: "company",
+        title: "企业资质宣传",
+        keywords: ["公司信息", "企业资质", "资质宣传", "公司宣传", "PDF", "查看", "下载"],
+        summary: "企业资质宣传 PDF，适合用于公司资质展示和客户审核资料提交。",
+        fields: {
+          资料类型: "企业资质 / 公司宣传",
+          适用内容: "企业资质展示",
+          文件格式: "PDF",
+          查看文件: "assets/company/企业资质宣传.pdf",
+          下载文件: "assets/company/企业资质宣传.pdf"
+        },
+        body: "用于客户了解公司资质和基础实力。提交前请确认客户是否还需要营业执照、检测报告、认证证书或其他补充资料。"
+      },
+      {
+        id: "company-yingzhu-profile",
+        module: "company",
+        title: "山东莹烛电子科技有限公司",
+        keywords: ["公司信息", "山东莹烛", "莹烛", "公司介绍", "企业宣传", "PDF", "查看", "下载"],
+        summary: "山东莹烛电子科技有限公司资料 PDF，适合用于公司介绍和客户初步了解。",
+        fields: {
+          资料类型: "公司介绍",
+          适用内容: "山东莹烛电子科技有限公司",
+          文件格式: "PDF",
+          查看文件: "assets/company/山东莹烛电子科技有限公司.pdf",
+          下载文件: "assets/company/山东莹烛电子科技有限公司.pdf"
+        },
+        body: "用于向客户介绍山东莹烛电子科技有限公司。发送前请确认客户需要的是公司介绍资料，还是某个具体产品的画册、检测报告或合同模板。"
+      },
+      {
+        id: "company-solar-catalog",
+        module: "company",
+        title: "太阳能产品画册",
+        keywords: ["公司信息", "画册", "太阳能", "太阳能产品", "产品资料", "PDF", "查看", "下载"],
+        summary: "太阳能产品画册 PDF，适合用于太阳能产品介绍和客户沟通。",
+        fields: {
+          资料类型: "产品画册",
+          适用内容: "太阳能产品",
+          文件格式: "PDF",
+          查看文件: "assets/company/太阳能产品画册.pdf",
+          下载文件: "assets/company/太阳能产品画册.pdf"
+        },
+        body: "用于向客户展示太阳能产品资料。发送前请确认客户关注的是太阳能整套方案、单品参数，还是检测报告/认证文件。"
+      },
+      {
+        id: "faq-file-import",
+        module: "faq",
+        title: "正式资料给到后如何更新网页？",
+        keywords: ["文件", "Excel", "Word", "PDF", "导入", "更新"],
+        summary: "将资料放入当前目录后，由 Codex 提取内容并更新 HTML 内置索引。",
+        fields: {
+          问题: "产品参数和工作流程文件给到后，网页如何学习？",
+          答案: "先读取 Excel/Word/PDF，整理成统一 knowledgeBase 数据，再嵌入 index.html。网页本身不在浏览器运行时读取本地文档。",
+          关联资料: "产品参数查询、工作流程查询"
+        },
+        body: "这样做可以避开 file:// 权限限制，也能保证双击 HTML 时搜索、收藏和详情展示都稳定可用。"
+      },
+      {
+        id: "faq-search",
+        module: "faq",
+        title: "搜索不到资料怎么办？",
+        keywords: ["搜索", "关键词", "别名", "型号"],
+        summary: "检查关键词、型号别名和资料是否已被整理进知识库。",
+        fields: {
+          问题: "输入关键词后没有结果，应该如何排查？",
+          答案: "先尝试型号、流程名称、岗位或场景关键词；如果仍无结果，需要在资料整理时补充别名和关键词。",
+          关联资料: "全站搜索"
+        },
+        body: "搜索会覆盖标题、关键词、摘要、正文、参数字段和流程步骤。"
+      },
+      {
+        id: "faq-favorite",
+        module: "faq",
+        title: "收藏会保存在哪里？",
+        keywords: ["收藏", "最近查看", "localStorage", "刷新"],
+        summary: "收藏和最近查看保存在当前浏览器的 localStorage 中。",
+        fields: {
+          问题: "刷新页面后收藏还在吗？",
+          答案: "在同一浏览器中会保留；如果清除浏览器数据或换电脑，需要重新收藏。",
+          关联资料: "收藏 / 最近查看"
+        },
+        body: "收藏功能不依赖服务器，适合当前单文件离线使用方式。"
+      }
+    ];
+
+    knowledgeBase.push(...(window.STAFF_TRAINING_WORKFLOWS || []));
+
+    const productFolders = ["YZ太阳能参数", "储能电池", "防爆摄像头彩页", "声光报警器"];
+    const productAssets = [
+      { folder: "YZ太阳能参数", title: "YZ-100W50AH-JT", pdf: "YZ-100W50AH-JT.pdf", word: "YZ-100W50AH-JT.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-120W60AH-JT", pdf: "YZ-120W60AH-JT.pdf", word: "YZ-120W60AH-JT.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-120W60AH-JT-X", pdf: "YZ-120W60AH-JT-X.pdf", word: "YZ-120W60AH-JT-X.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-120W60AH双板", pdf: "YZ-120W60AH双板.pdf", word: "YZ-120W60AH双板.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-120W70AH-JT", pdf: "YZ-120W70AH-JT.pdf", word: "YZ-120W70AH-JT.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-140W60AH-JT", pdf: "YZ-140W60AH-JT.pdf", word: "YZ-140W60AH-JT.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-140W80AH-JT", pdf: "YZ-140W80AH-JT.pdf", word: "YZ-140W80AH-JT.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-150W80AH-JT", pdf: "YZ-150W80AH-JT.pdf", word: "YZ-150W80AH-JT.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-150W80AH-JT-X", pdf: "YZ-150W80AH-JT-X.pdf", word: "YZ-150W80AH-JT-X.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-200W100AH", pdf: "YZ-200W100AH.pdf", word: "YZ-200W100AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-240W120AH", pdf: "YZ-240W120AH.pdf", word: "YZ-240W120AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-240W120AH - X", pdf: "YZ-240W120AH - X.pdf", word: "YZ-240W120AH - X.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-300W150AH", pdf: "YZ-300W150AH.pdf", word: "YZ-300W150AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-300W180AH", pdf: "YZ-300W180AH.pdf", word: "YZ-300W180AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-400W200AH", pdf: "YZ-400W200AH.pdf", word: "YZ-400W200AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-40W20AH", pdf: "YZ-40W20AH.pdf", word: "YZ-40W20AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-480W240AH", pdf: "YZ-480W240AH.pdf", word: "YZ-480W240AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-600W300AH", pdf: "YZ-600W300AH.pdf", word: "YZ-600W300AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-60W30AH -X", pdf: "YZ-60W30AH -X.pdf", word: "YZ-60W30AH -X.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-60W40AH -X", pdf: "YZ-60W40AH -X.pdf", word: "YZ-60W40AH -X.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-80W30AH -X", pdf: "YZ-80W30AH -X.pdf", word: "YZ-80W30AH -X.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-80W40AH", pdf: "YZ-80W40AH.pdf", word: "YZ-80W40AH.docx" },
+      { folder: "YZ太阳能参数", title: "YZ-80W40AH -X", pdf: "YZ-80W40AH -X.pdf", word: "YZ-80W40AH -X.docx" },
+      { folder: "YZ太阳能参数", title: "粤洲太阳能储5度电系统", word: "粤洲太阳能储5度电系统.docx" },
+      { folder: "储能电池", title: "11度立式(2)", pdf: "11度立式(2).pdf" },
+      { folder: "储能电池", title: "16度立式(2)", pdf: "16度立式(2).pdf" },
+      { folder: "储能电池", title: "5度立式(1)(2)", pdf: "5度立式(1)(2).pdf" },
+      { folder: "防爆摄像头彩页", title: "12倍变焦防爆球机", pdf: "12倍变焦防爆球机.pdf" },
+      { folder: "防爆摄像头彩页", title: "400万25倍免流量防爆布控球", pdf: "400万25倍免流量防爆布控球.pdf" },
+      { folder: "防爆摄像头彩页", title: "4G防爆布控球机 23倍变焦", pdf: "4G防爆布控球机 23倍变焦.pdf" },
+      { folder: "防爆摄像头彩页", title: "4G款定焦布控球机参数", pdf: "4G款定焦布控球机参数.pdf" },
+      { folder: "防爆摄像头彩页", title: "4倍变焦防爆铸铝款海康400万2.7-12MM", pdf: "4倍变焦防爆铸铝款海康400万2.7-12MM.pdf" },
+      { folder: "防爆摄像头彩页", title: "KBA127 2.7-12", pdf: "KBA127 2.7-12.pdf" },
+      { folder: "防爆摄像头彩页", title: "本安400万4倍变焦警戒款", pdf: "本安400万4倍变焦警戒款.pdf" },
+      { folder: "防爆摄像头彩页", title: "短款海康400万2.7-8MM变焦网络红外防爆摄像仪", pdf: "短款海康400万2.7-8MM变焦网络红外防爆摄像仪.pdf" },
+      { folder: "防爆摄像头彩页", title: "短款双光400万", pdf: "短款双光400万.pdf" },
+      { folder: "防爆摄像头彩页", title: "防爆200万像素", pdf: "防爆200万像素.pdf" },
+      { folder: "防爆摄像头彩页", title: "防爆半球400万", pdf: "防爆半球400万.pdf" },
+      { folder: "防爆摄像头彩页", title: "防爆摄像机800万(1)", pdf: "防爆摄像机800万(1).pdf" },
+      { folder: "防爆摄像头彩页", title: "防爆鱼眼摄像头", pdf: "防爆鱼眼摄像头.pdf" },
+      { folder: "防爆摄像头彩页", title: "风冷水冷防爆摄像仪", pdf: "风冷水冷防爆摄像仪.pdf" },
+      { folder: "防爆摄像头彩页", title: "海康4G充流量", pdf: "海康4G充流量.pdf" },
+      { folder: "防爆摄像头彩页", title: "海康铸铝款400万定焦双光防爆摄像机", pdf: "海康铸铝款400万定焦双光防爆摄像机.pdf" },
+      { folder: "防爆摄像头彩页", title: "警戒款防爆", pdf: "警戒款防爆.pdf" },
+      { folder: "声光报警器", title: "4G显示屏款声光报警器", pdf: "4G显示屏款声光报警器.pdf" }
+    ];
+
+    knowledgeBase.push(...productAssets.map((item, index) => {
+      const base = `assets/products/${item.folder}/`;
+      const pdfPath = item.pdf ? base + item.pdf : "";
+      const wordPath = item.word ? base + item.word : "";
+      const productType = item.folder === "YZ太阳能参数" ? "太阳能参数"
+        : item.folder === "储能电池" ? "储能电池参数"
+        : item.folder === "防爆摄像头彩页" ? "防爆摄像头参数"
+        : "声光报警器参数";
+      return {
+        id: `prd-file-${index + 1}`,
+        module: "product",
+        title: item.title,
+        keywords: ["产品参数", item.folder, productType, item.title, item.pdf || "", item.word || ""].filter(Boolean),
+        summary: `${item.folder} 文件夹中的${productType}资料，可查看或下载。`,
+        fields: {
+          文件夹: item.folder,
+          产品类别: productType,
+          文件格式: [item.pdf ? "PDF" : "", item.word ? "Word / DOCX" : ""].filter(Boolean).join(" + "),
+          查看文件: pdfPath,
+          下载文件: pdfPath,
+          Word文件: wordPath
+        },
+        body: `${item.title} 产品参数资料。员工可按文件夹筛选资料；有 PDF 时可直接查看，PDF 和 Word 文件可按需下载给客户或内部使用。`
+      };
+    }));
+
+    const moduleNav = document.querySelector("#moduleNav");
+    const moduleView = document.querySelector("#moduleView");
+    const searchView = document.querySelector("#searchView");
+    const detailPanel = document.querySelector("#detailPanel");
+    const searchInput = document.querySelector("#searchInput");
+    const clearSearch = document.querySelector("#clearSearch");
+    const resultCount = document.querySelector("#resultCount");
+    const metricGrid = document.querySelector("#metricGrid");
+
+    const state = {
+      module: localStorage.getItem("kbActiveModule") || "product",
+      selected: localStorage.getItem("kbSelectedRecord") || knowledgeBase[0].id,
+      favorites: JSON.parse(localStorage.getItem("kbFavorites") || "[]"),
+      recent: JSON.parse(localStorage.getItem("kbRecent") || "[]"),
+      productFolder: localStorage.getItem("kbProductFolder") || "全部",
+      query: ""
+    };
+    if (!["全部", ...productFolders].includes(state.productFolder)) state.productFolder = "全部";
+
+    function moduleRecords(moduleId) {
+      if (moduleId === "saved") return [];
+      return knowledgeBase.filter(item => item.module === moduleId);
+    }
+
+    function saveState() {
+      localStorage.setItem("kbActiveModule", state.module);
+      localStorage.setItem("kbSelectedRecord", state.selected);
+      localStorage.setItem("kbFavorites", JSON.stringify(state.favorites));
+      localStorage.setItem("kbRecent", JSON.stringify(state.recent));
+      localStorage.setItem("kbProductFolder", state.productFolder);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function highlight(text, query = state.query) {
+      const safe = escapeHtml(text);
+      const term = query.trim();
+      if (!term) return safe;
+      const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return safe.replace(new RegExp(`(${escapedTerm})`, "gi"), "<mark>$1</mark>");
+    }
+
+    function searchableText(item) {
+      const fieldText = Object.entries(item.fields || {}).flatMap(([key, value]) => {
+        if (Array.isArray(value)) return [key, ...value];
+        return [key, value];
+      }).join(" ");
+      return [item.title, item.summary, item.body, item.module, ...(item.keywords || []), fieldText].join(" ").toLowerCase();
+    }
+
+    function groupedCounts() {
+      return modules.reduce((acc, module) => {
+        acc[module.id] = module.id === "saved"
+          ? state.favorites.length + state.recent.length
+          : moduleRecords(module.id).length;
+        return acc;
+      }, {});
+    }
+
+    function renderNav() {
+      const counts = groupedCounts();
+      moduleNav.innerHTML = modules.map(module => `
+        <button class="nav-btn ${state.module === module.id ? "active" : ""}" type="button" data-module="${module.id}">
+          <span class="nav-icon">${module.icon}</span>
+          <span>
+            <span class="nav-title">${module.title}</span>
+            <span class="nav-meta">${module.intro}</span>
+          </span>
+          <span class="count-pill">${counts[module.id]}</span>
+        </button>
+      `).join("");
+      moduleNav.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.module = btn.dataset.module;
+          state.query = "";
+          searchInput.value = "";
+          render();
+        });
+      });
+    }
+
+    function renderMetrics() {
+      const products = moduleRecords("product").length;
+      const workflows = moduleRecords("workflow").length;
+      const faqs = moduleRecords("faq").length;
+      const contracts = moduleRecords("contract").length;
+      const reports = moduleRecords("report").length;
+      const company = moduleRecords("company").length;
+      metricGrid.innerHTML = `
+        <div class="metric"><strong>${products}</strong><span>产品参数</span></div>
+        <div class="metric"><strong>${workflows}</strong><span>工作流程</span></div>
+        <div class="metric"><strong>${faqs}</strong><span>常见问题</span></div>
+        <div class="metric"><strong>${contracts}</strong><span>合同模板</span></div>
+        <div class="metric"><strong>${reports}</strong><span>检测报告</span></div>
+        <div class="metric"><strong>${company}</strong><span>公司信息</span></div>
+        <div class="metric"><strong>${state.favorites.length}</strong><span>已收藏</span></div>
+      `;
+      resultCount.textContent = state.query
+        ? `搜索到 ${searchResults().length} 条结果`
+        : `共 ${knowledgeBase.length} 条资料`;
+    }
+
+    function renderModuleView() {
+      const module = modules.find(item => item.id === state.module) || modules[0];
+      if (module.id === "saved") {
+        renderSavedView(module);
+        return;
+      }
+      const allRecords = moduleRecords(module.id);
+      const records = module.id === "product" && state.productFolder !== "全部"
+        ? allRecords.filter(item => item.fields?.文件夹 === state.productFolder)
+        : allRecords;
+      const folderFilters = module.id === "product" ? renderProductFolderFilters(allRecords) : "";
+      moduleView.innerHTML = `
+        <div class="module-grid">
+          <article class="module-card">
+            <p class="eyebrow">${module.short.toUpperCase()}</p>
+            <h3>${module.title}</h3>
+            <p class="summary">${module.intro}</p>
+            <div class="tag-row">
+              <span class="tag">${records.length} 条资料</span>
+              <span class="tag">全站可搜索</span>
+            </div>
+          </article>
+          ${folderFilters}
+          ${records.map(renderRecordButton).join("")}
+        </div>
+      `;
+      bindProductFolderButtons(moduleView);
+      bindRecordButtons(moduleView);
+    }
+
+    function renderProductFolderFilters(records) {
+      const folders = ["全部", ...productFolders];
+      return `
+        <div class="folder-filters" aria-label="产品参数文件夹筛选">
+          ${folders.map(folder => {
+            const count = folder === "全部"
+              ? records.length
+              : records.filter(item => item.fields?.文件夹 === folder).length;
+            return `<button class="folder-btn ${state.productFolder === folder ? "active" : ""}" type="button" data-folder="${escapeHtml(folder)}">${escapeHtml(folder)} ${count}</button>`;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function bindProductFolderButtons(scope) {
+      scope.querySelectorAll(".folder-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          state.productFolder = button.dataset.folder;
+          render();
+        });
+      });
+    }
+
+    function renderSavedView(module) {
+      const favorites = state.favorites.map(findRecord).filter(Boolean);
+      const recent = state.recent.map(findRecord).filter(Boolean);
+      moduleView.innerHTML = `
+        <div class="module-grid">
+          <article class="module-card">
+            <p class="eyebrow">${module.short.toUpperCase()}</p>
+            <h3>${module.title}</h3>
+            <p class="summary">${module.intro}</p>
+            <div class="tag-row">
+              <span class="tag">${favorites.length} 个收藏</span>
+              <span class="tag">${recent.length} 个最近查看</span>
+            </div>
+          </article>
+          <article class="module-card">
+            <h3>资料整理规则</h3>
+            <p class="summary">Excel 会整理为产品参数表；Word/PDF 会整理为流程步骤或 FAQ。正式资料接入后，这里会成为高频资料入口。</p>
+          </article>
+        </div>
+        <div class="result-panel">
+          <h3>我的收藏</h3>
+          <div class="record-list">${favorites.length ? favorites.map(renderRecordButton).join("") : `<div class="empty">还没有收藏。打开资料详情后点击星标即可保存。</div>`}</div>
+        </div>
+        <div class="result-panel">
+          <h3>最近查看</h3>
+          <div class="record-list">${recent.length ? recent.map(renderRecordButton).join("") : `<div class="empty">查看过的资料会自动显示在这里。</div>`}</div>
+        </div>
+      `;
+      bindRecordButtons(moduleView);
+    }
+
+    function renderRecordButton(item) {
+      const module = modules.find(module => module.id === item.module);
+      const actionLabel = item.module === "workflow" ? `<span class="record-action">查看流程</span>` : "";
+      const favored = state.favorites.includes(item.id) ? "★" : "☆";
+      return `
+        <button class="record" type="button" data-id="${item.id}">
+          <span class="record-meta"><span>${module.title}</span><span>${favored}</span></span>
+          <strong>${highlight(item.title)}</strong>
+          <p>${highlight(item.summary)}</p>
+          <span class="tag-row">${item.keywords.slice(0, 4).map(keyword => `<span class="tag">${highlight(keyword)}</span>`).join("")}</span>
+          ${actionLabel}
+        </button>
+      `;
+    }
+
+    function bindRecordButtons(scope) {
+      scope.querySelectorAll(".record").forEach(button => {
+        button.addEventListener("click", () => selectRecord(button.dataset.id));
+      });
+    }
+
+    function findRecord(id) {
+      return knowledgeBase.find(item => item.id === id);
+    }
+
+    function selectRecord(id) {
+      const item = findRecord(id);
+      if (!item) return;
+      state.selected = id;
+      state.recent = [id, ...state.recent.filter(itemId => itemId !== id)].slice(0, 6);
+      saveState();
+      if (item.module === "workflow") {
+        window.location.href = `workflow-detail.html?id=${encodeURIComponent(item.id)}`;
+        return;
+      }
+      renderDetail();
+      renderNav();
+      renderMetrics();
+    }
+
+    function toggleFavorite(id) {
+      state.favorites = state.favorites.includes(id)
+        ? state.favorites.filter(itemId => itemId !== id)
+        : [id, ...state.favorites];
+      saveState();
+      render();
+    }
+
+    function renderFields(item) {
+      const entries = Object.entries(item.fields || {}).filter(([key]) => key !== "steps" && key !== "下载文件" && key !== "查看文件" && key !== "Word文件");
+      if (!entries.length) return "";
+      return `
+        <table class="field-table">
+          <tbody>
+            ${entries.map(([key, value]) => `<tr><th>${escapeHtml(key)}</th><td>${highlight(value)}</td></tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderFileActions(item) {
+      const viewHref = item.fields?.查看文件 || (item.module === "report" ? item.fields?.下载文件 : "");
+      const downloadHref = item.fields?.下载文件;
+      const wordHref = item.fields?.Word文件;
+      if (!viewHref && !downloadHref && !wordHref) return "";
+      const downloadLabel = item.module === "report" ? "下载检测报告" : item.module === "company" ? "下载资料" : item.module === "product" ? "下载PDF" : "下载模板";
+      const viewLabel = item.module === "report" ? "查看资料" : item.module === "company" || item.module === "product" ? "查看资料" : "查看文件";
+      const downloadName = downloadHref ? downloadHref.split("/").pop() : "";
+      const wordName = wordHref ? wordHref.split("/").pop() : "";
+      return `
+        <div class="file-actions">
+          ${viewHref ? `<a class="view-btn" href="${escapeHtml(viewHref)}" target="_blank" rel="noopener"> ${viewLabel}</a>` : ""}
+          ${downloadHref ? `<a class="download-btn" href="${escapeHtml(downloadHref)}" download="${escapeHtml(downloadName)}">${downloadLabel}</a>` : ""}
+          ${wordHref ? `<a class="view-btn" href="${escapeHtml(wordHref)}" download="${escapeHtml(wordName)}">下载Word</a>` : ""}
+        </div>
+      `;
+    }
+
+    function renderSteps(item) {
+      const steps = item.fields?.steps || [];
+      if (!steps.length) return "";
+      return `
+        <h3>流程步骤</h3>
+        <ol class="steps">
+          ${steps.map((step, index) => `<li><span class="step-num">${index + 1}</span><span>${highlight(step)}</span></li>`).join("")}
+        </ol>
+      `;
+    }
+
+    function renderDetail() {
+      const item = findRecord(state.selected) || knowledgeBase[0];
+      const module = modules.find(module => module.id === item.module);
+      const favoriteLabel = state.favorites.includes(item.id) ? "★ 已收藏" : "☆ 收藏";
+      detailPanel.innerHTML = `
+        <div class="detail-head">
+          <div>
+            <p class="eyebrow">${module.title}</p>
+            <h3 class="detail-title">${highlight(item.title)}</h3>
+          </div>
+          <button class="text-btn" type="button" id="favoriteBtn">${favoriteLabel}</button>
+        </div>
+        <p class="summary">${highlight(item.summary)}</p>
+        ${renderFields(item)}
+        ${renderFileActions(item)}
+        <div class="detail-body">${highlight(item.body)}</div>
+        ${renderSteps(item)}
+        <div class="tag-row" style="margin-top:16px;">
+          ${item.keywords.map(keyword => `<span class="tag">${highlight(keyword)}</span>`).join("")}
+        </div>
+      `;
+      document.querySelector("#favoriteBtn").addEventListener("click", () => toggleFavorite(item.id));
+    }
+
+    function searchResults() {
+      const query = state.query.trim().toLowerCase();
+      if (!query) return [];
+      return knowledgeBase.filter(item => searchableText(item).includes(query));
+    }
+
+    function renderSearchView() {
+      const results = searchResults();
+      const grouped = modules
+        .filter(module => module.id !== "saved")
+        .map(module => ({ module, records: results.filter(item => item.module === module.id) }))
+        .filter(group => group.records.length);
+
+      searchView.innerHTML = results.length ? grouped.map(group => `
+        <section class="result-panel">
+          <h3>${group.module.title} <span class="tag">${group.records.length} 条</span></h3>
+          <div class="record-list">${group.records.map(renderRecordButton).join("")}</div>
+        </section>
+      `).join("") : `<div class="empty">没有找到匹配资料。可以尝试产品型号、流程场景、岗位或同义关键词。</div>`;
+      bindRecordButtons(searchView);
+    }
+
+    function render() {
+      renderNav();
+      renderMetrics();
+      renderDetail();
+      if (state.query.trim()) {
+        moduleView.classList.add("hidden");
+        searchView.classList.remove("hidden");
+        renderSearchView();
+      } else {
+        searchView.classList.add("hidden");
+        moduleView.classList.remove("hidden");
+        renderModuleView();
+      }
+      saveState();
+    }
+
+    searchInput.addEventListener("input", () => {
+      state.query = searchInput.value;
+      render();
+    });
+
+    clearSearch.addEventListener("click", () => {
+      state.query = "";
+      searchInput.value = "";
+      render();
+      searchInput.focus();
+    });
+
+    if (findRecord(state.selected)?.module === "workflow") {
+      state.selected = knowledgeBase.find(item => item.module !== "workflow").id;
+    }
+    render();
+  </script>
+</body>
+</html>

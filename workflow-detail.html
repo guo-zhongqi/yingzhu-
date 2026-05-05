@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流程详情</title>
+  <style>
+    :root {
+      --ink: #14232b;
+      --muted: #5e7078;
+      --line: #d8e2e6;
+      --paper: #f6f8f5;
+      --panel: #ffffff;
+      --brand: #0f766e;
+      --brand-strong: #0a5f58;
+      --gold: #b7791f;
+      --warn: #fff7ed;
+      --warn-line: #fed7aa;
+      --shadow: 0 18px 42px rgba(20, 35, 43, .12);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(130deg, rgba(15, 118, 110, .12), transparent 34%),
+        linear-gradient(300deg, rgba(183, 121, 31, .12), transparent 34%),
+        var(--paper);
+    }
+
+    button, a { font: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0 46px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .back {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 0 13px;
+      background: #e7f2ef;
+      color: var(--brand-strong);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .back:hover { background: #d9ebe7; }
+
+    .source {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .fav-btn {
+      min-height: 40px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 13px;
+      background: #e7f2ef;
+      color: var(--brand-strong);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .fav-btn:hover { background: #d9ebe7; }
+
+    .hero {
+      border-radius: 8px;
+      padding: 30px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--brand-strong);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      margin: 0;
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcfb;
+    }
+
+    .field span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--brand-strong);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .field strong {
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 12px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: 44px;
+      width: 2px;
+      height: calc(100% - 20px);
+      background: #bfd9d4;
+    }
+
+    .num {
+      z-index: 1;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 900;
+    }
+
+    .step-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .step-card p {
+      margin: 0;
+      color: #2f434b;
+      line-height: 1.72;
+    }
+
+    .note {
+      margin-top: 10px;
+      border: 1px solid var(--warn-line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: var(--warn);
+      color: #7c3f10;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .doc-images {
+      display: grid;
+      gap: 12px;
+    }
+
+    .doc-image {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .doc-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .body-text {
+      color: #344a53;
+      line-height: 1.86;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+
+    .side {
+      position: sticky;
+      top: 18px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+      line-height: 1.58;
+      color: #35494f;
+    }
+
+    .check b {
+      color: var(--brand-strong);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: #edf4f2;
+      color: #315c57;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .empty {
+      padding: 28px;
+      border: 1px dashed #b8c7c2;
+      border-radius: 8px;
+      background: rgba(255,255,255,.8);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .layout, .field-grid { grid-template-columns: 1fr; }
+      .side { position: static; }
+      .hero { padding: 22px; }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 24px, 1180px);
+        padding-top: 14px;
+      }
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      h1 { font-size: 32px; }
+      .panel { padding: 16px; }
+      .step { grid-template-columns: 36px minmax(0, 1fr); }
+      .num { width: 36px; height: 36px; }
+      .step:not(:last-child)::after {
+        left: 17px;
+        top: 38px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="topbar">
+      <a class="back" href="index.html">← 返回知识库</a>
+      <div class="top-actions">
+        <div class="source" id="sourceLabel">流程详情</div>
+        <button class="fav-btn" id="favoriteBtn" type="button">☆ 收藏</button>
+      </div>
+    </div>
+
+    <section class="hero" id="hero"></section>
+
+    <section class="layout">
+      <div>
+        <section class="panel" id="fieldsPanel"></section>
+        <section class="panel" id="flowPanel"></section>
+        <section class="panel" id="imagePanel"></section>
+        <section class="panel" id="bodyPanel"></section>
+      </div>
+      <aside class="side">
+        <section class="panel">
+          <h2>注意事项</h2>
+          <div class="checklist" id="notesPanel"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const workflows = [
+      {
+        id: "wf-onboarding",
+        title: "新员工入职资料办理流程",
+        source: "示例流程",
+        summary: "适用于新员工到岗首日的人事资料、账号和培训安排确认。",
+        keywords: ["入职", "资料", "账号", "人事"],
+        fields: { 岗位: "人事专员 / 部门负责人", 场景: "新员工到岗首日" },
+        steps: [
+          "核对身份证明、录用信息和岗位归属。",
+          "确认劳动合同、保密协议和员工手册签收状态。",
+          "开通办公账号、培训系统账号和必要业务权限。",
+          "安排直属上级进行岗位目标说明。",
+          "在入职台账中记录完成状态和遗留事项。"
+        ],
+        notes: ["资料缺失时先标记待补齐。", "敏感系统权限必须等资料与审批完整后再开通。"],
+        body: "如资料缺失，先标记为待补齐，不影响安全培训和基础制度培训，但不得开通敏感系统权限。"
+      },
+      {
+        id: "wf-after-sales",
+        title: "客户售后问题升级流程",
+        source: "示例流程",
+        summary: "用于处理超出一线权限或影响较大的客户问题。",
+        keywords: ["售后", "客户", "升级", "投诉", "反馈"],
+        fields: { 岗位: "客服专员 / 技术支持 / 客户经理", 场景: "客户投诉、故障影响、承诺延期" },
+        steps: [
+          "记录客户信息、问题描述、影响范围和期望处理时间。",
+          "判断问题等级，确认是否涉及数据、安全或合同风险。",
+          "将背景、已尝试动作和所需支持同步给责任团队。",
+          "向客户承诺下一次反馈时间，并在系统中留痕。",
+          "问题关闭后补充原因、处理结果和预防措施。"
+        ],
+        notes: ["升级不是转交责任，发起人要持续跟进。", "承诺反馈时间比承诺无法保证的结果更稳妥。"],
+        body: "升级不是转交责任。发起人需要持续跟进，直到客户收到明确结果。"
+      },
+      {
+        id: "wf-inventory",
+        title: "仓库盘点作业流程",
+        source: "示例流程",
+        summary: "适用于使用 B240 采集器执行月度库存盘点。",
+        keywords: ["仓库", "盘点", "库存", "B240", "采集器"],
+        fields: { 岗位: "仓库管理员 / 财务复核", 场景: "月度盘点、资产清查" },
+        steps: [
+          "冻结盘点范围内的出入库操作。",
+          "同步最新物料清单到 B240 采集器。",
+          "按库区逐项扫码，异常项拍照并备注原因。",
+          "提交盘点结果，由财务复核差异。",
+          "解冻库存并归档盘点报告。"
+        ],
+        notes: ["账实不符不能直接改库存数量。", "异常项必须形成差异记录。"],
+        body: "盘点期间发现账实不符时，不得直接修改库存数量，应先形成差异记录。"
+      },
+      {
+        id: "wf-pole-order",
+        title: "立杆下单流程",
+        source: "来源：立杆下单流程.docx",
+        summary: "用于立杆订单的客户地址确认、运费问价、物流比价、下单信息整理和仓库/工厂发货选择。",
+        keywords: ["立杆", "下单", "问价", "物流", "德州工厂", "电商仓库"],
+        fields: {
+          岗位: "电商运营 / 客服 / 下单人员",
+          场景: "客户购买立杆，需要确认运费和发货方式"
+        },
+        steps: [
+          "获得客户地址，确保地址、收货人和联系方式完整。",
+          "按固定格式问价：地址 + 件数 + 底座尺寸（20cm-20cm）+ 包裹最长长度（常规立杆组合方式）+ 总重量（看常规立杆重量）。",
+          "对比快运价格，包括壹米滴答、顺心捷达、新安能、京东物流、德邦快递和其他物流。",
+          "选择物流：优先选择价格低并且送货上门的；其次选择价格低到镇并电话确认客户是否可自提；再考虑价格较高到镇或价格较高送货。",
+          "整理下单信息：店铺来源、店铺运营、客户地址、客户选择规格（厚度）、配件明细、发货方式、现付/到付、日期、总价和收款渠道。",
+          "如果电商仓库没有客户需要的产品，需要下单到德州工厂；表格不要填写店铺名字和货物总价，发货方式选择送电商或从德州仓库直接发货。",
+          "区分德州下单和电商下单；从德州仓库直接发货的订单，也需要在电商交流群下单，发货方式选择德州发。"
+        ],
+        notes: [
+          "规格、数量一定不要出错。",
+          "配件要标齐全：横臂数量、地垄、避雷针、螺丝包等。",
+          "运费特别高时先和客户确认到镇自提是否可以。",
+          "写清付款渠道：平台、对公户或微信。",
+          "德州仓库直接发货也要在电商交流群下单。"
+        ],
+        images: [
+          { src: "assets/pole-order-image1.png", alt: "立杆下单流程图表 1" },
+          { src: "assets/pole-order-image2.png", alt: "立杆下单流程图表 2" },
+          { src: "assets/pole-order-image3.png", alt: "立杆下单流程图表 3" }
+        ],
+        body: "问价格式：地址+件数+底座尺寸（20cm-20cm）+包裹最长的长度（常规立杆组合方式）+总重量（看常规立杆重量）。\n\n举例：客户下单一件2.5米组合立杆，地址：安徽省马鞍山市当涂县年陡镇江南人家北门妈妈驿站（丽池丽湖）, 邓广青, 13063492504-7296。\n\n问价格式：安徽省马鞍山市当涂县年陡镇江南人家北门妈妈驿站（丽池丽湖）, 邓广青, 13063492504-7296+一件+20-20cm+1.5米长+总重12kg。\n\n比快运的价格（壹米滴答/顺心捷达/新安能/京东物流/德邦快递/物流）。\n\n选择物流：优先级：价格低并且送货上门的 > 价格低到镇（打电话确认到镇自提是否可以） > 价格较高到镇或者价格较高送货。最坏的情况，运费特别高，如果运费特别高，优先和客户确认到镇是否可以；最最最最坏的情况，客户不同意到镇，只要不赔就发货。\n\n下单格式：客户来自哪个店铺，此店铺运营是谁。客户地址，客户选择的规格（厚度），配件标齐全（需要什么横臂，数量多少，是否需要地垄，是否需要避雷针，螺丝包）。发货方式是什么，现付还是到付。日期。总价是多少（写明是付在平台还是对公户，还是付到微信）。注：规格，数量，一定不要出错！！！\n\n如果电商仓库没有客户需要的产品，需要下单到德州工厂里面，下单时表格不要填写店铺名字和货物总价，发货方式选择：送电商或者从德州仓库直接发货。从德州仓库直接发货的订单，也需要在电商交流群下单子，只不过发货方式选择：德州发。"
+      }
+    ];
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id") || "wf-pole-order";
+    const workflow = workflows.find(item => item.id === id) || workflows.find(item => item.id === "wf-pole-order");
+    const favoriteBtn = document.querySelector("#favoriteBtn");
+
+    function getFavorites() {
+      return JSON.parse(localStorage.getItem("kbFavorites") || "[]");
+    }
+
+    function setFavorites(ids) {
+      localStorage.setItem("kbFavorites", JSON.stringify(ids));
+    }
+
+    function paintFavorite() {
+      favoriteBtn.textContent = getFavorites().includes(workflow.id) ? "★ 已收藏" : "☆ 收藏";
+    }
+
+    document.title = `${workflow.title} - 流程详情`;
+    document.querySelector("#sourceLabel").textContent = workflow.source || "流程详情";
+    document.querySelector("#hero").innerHTML = `
+      <p class="eyebrow">WORKFLOW DETAIL</p>
+      <h1>${escapeHtml(workflow.title)}</h1>
+      <p class="summary">${escapeHtml(workflow.summary)}</p>
+      <div class="tag-row">${workflow.keywords.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
+    `;
+
+    document.querySelector("#fieldsPanel").innerHTML = `
+      <h2>适用信息</h2>
+      <div class="field-grid">
+        ${Object.entries(workflow.fields).map(([key, value]) => `
+          <div class="field"><span>${escapeHtml(key)}</span><strong>${escapeHtml(value)}</strong></div>
+        `).join("")}
+      </div>
+    `;
+
+    document.querySelector("#flowPanel").innerHTML = `
+      <h2>流程图</h2>
+      <div class="flow">
+        ${workflow.steps.map((step, index) => `
+          <div class="step">
+            <div class="num">${index + 1}</div>
+            <div class="step-card">
+              <h3>${index === 0 ? "开始" : "步骤 " + (index + 1)}</h3>
+              <p>${escapeHtml(step)}</p>
+              ${workflow.notes[index] ? `<div class="note">注意：${escapeHtml(workflow.notes[index])}</div>` : ""}
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    const images = workflow.images || [];
+    document.querySelector("#imagePanel").innerHTML = images.length ? `
+      <h2>原文件图表</h2>
+      <div class="doc-images">
+        ${images.map(image => `
+          <figure class="doc-image">
+            <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}">
+          </figure>
+        `).join("")}
+      </div>
+    ` : `
+      <h2>原文件图表</h2>
+      <div class="empty">该流程暂无原文件图表，已根据步骤生成流程图式展示。</div>
+    `;
+
+    document.querySelector("#bodyPanel").innerHTML = `
+      <h2>原文整理</h2>
+      <div class="body-text">${escapeHtml(workflow.body)}</div>
+    `;
+
+    document.querySelector("#notesPanel").innerHTML = workflow.notes.map(note => `
+      <div class="check"><b>注意：</b>${escapeHtml(note)}</div>
+    `).join("");
+
+    favoriteBtn.addEventListener("click", () => {
+      const ids = getFavorites();
+      setFavorites(ids.includes(workflow.id)
+        ? ids.filter(item => item !== workflow.id)
+        : [workflow.id, ...ids]);
+      paintFavorite();
+    });
+    paintFavorite();
+  </script>
+</body>
+</html>
